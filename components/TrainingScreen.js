@@ -1,3 +1,4 @@
+// @refresh reset
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -13,13 +14,14 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "react-router-native";
 import { useSpring, animated, config } from "react-spring";
+import { Spring } from "react-spring/renderprops";
 const trainingPackets = [
   {
     name: "Core Workout",
     color: "dodgerblue",
     intensity: "1",
     duration: "2",
-    photo: "https://picsum.photos/497",
+    photo: "https://picsum.photos/496",
     key: "0",
   },
   {
@@ -55,123 +57,137 @@ function TrainingScreen(props) {
   // });
   const AnimatedView = animated(View);
   return (
-    <AnimatedView style={loadAnim}>
-      <View style={styles.trainingWidgets}>
-        {/* <AnimatedView style={scrollBar}> */}
-        <TextInput style={styles.searchButton} placeholder="Search" />
-        {/* </AnimatedView> */}
-        <ScrollView
-          onScrollBeginDrag={() => {
-            setOffset("scrolled");
-          }}
-          onScrollToTop={() => {
-            console.log("works");
-          }}
-        >
-          <FlatList
-            data={trainingPackets}
-            renderItem={({ item }) => (
-              <Link
-                onPress={() => {
-                  props.getTrainingName(item.name);
-                }}
-                component={TouchableOpacity}
-                activeOpacity={0.5}
-                to="/exercises"
-              >
-                <View style={styles.trainingPackets}>
-                  <Image
-                    style={styles.trainingPacketsBg}
-                    source={{ uri: item.photo }}
-                  />
-                  <LinearGradient
-                    // Background Linear Gradient
+    <Spring
+      from={{
+        opacity: 0,
+        top: "7%",
+        left: "2.5%",
+        height: "95%",
+        left: "-5%",
+      }}
+      to={{ opacity: 1, top: "7%", left: "2.5%", height: "95%" }}
+    >
+      {(mainProps) => (
+        <View style={mainProps}>
+          {/* <AnimatedView style={scrollBar}> */}
+          <TextInput style={styles.searchButton} placeholder="Search" />
+          {/* </AnimatedView> */}
+          <ScrollView
+            onScrollBeginDrag={() => {
+              setOffset("scrolled");
+            }}
+            onScrollToTop={() => {
+              console.log("works");
+            }}
+          >
+            <FlatList
+              data={trainingPackets}
+              renderItem={({ item }) => (
+                <Link
+                  onPress={() => {
+                    props.getTrainingName(item.name);
+                    window.removeEventListener;
+                  }}
+                  component={TouchableOpacity}
+                  activeOpacity={0.5}
+                  to="/exercises"
+                >
+                  <View style={styles.trainingPackets}>
+                    <Image
+                      style={styles.trainingPacketsBg}
+                      source={{ uri: item.photo }}
+                    />
+                    <LinearGradient
+                      // Background Linear Gradient
 
-                    colors={["transparent", item.color]}
-                    start={{ x: 0, y: 0.9 }}
-                    end={{ x: 0, y: 1 }}
-                    locations={[0, 1]}
-                    style={{
-                      position: "absolute",
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      height: 2500,
-                    }}
-                  />
+                      colors={["transparent", item.color]}
+                      start={{ x: 0, y: 0.9 }}
+                      end={{ x: 0, y: 1 }}
+                      locations={[0, 1]}
+                      style={{
+                        position: "absolute",
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        height: 2500,
+                      }}
+                    />
 
-                  <Text style={styles.trainingPacketsName}>{item.name}</Text>
-                  <View style={styles.trainingPacketsAtributesContainer}>
-                    <View style={styles.trainingPacketsAtributes}>
-                      <Text style={styles.trainingPacketsAtributesName}>
-                        Intensity
-                      </Text>
-                      <Text style={styles.trainingPacketsAtributesValue}></Text>
-                      <Image
-                        style={
-                          item.intensity > 0
-                            ? styles.valueOrb
-                            : styles.noValueOrb
-                        }
-                      />
-                      <Image
-                        style={
-                          item.intensity > 1
-                            ? styles.valueOrb
-                            : styles.noValueOrb
-                        }
-                      />
-                      <Image
-                        style={
-                          item.intensity > 2
-                            ? styles.valueOrb
-                            : styles.noValueOrb
-                        }
-                      />
-                    </View>
-                    <View style={styles.trainingPacketsAtributes}>
-                      <Text style={styles.trainingPacketsAtributesName}>
-                        Duration
-                      </Text>
+                    <Text style={styles.trainingPacketsName}>{item.name}</Text>
+                    <View style={styles.trainingPacketsAtributesContainer}>
+                      <View style={styles.trainingPacketsAtributes}>
+                        <Text style={styles.trainingPacketsAtributesName}>
+                          Intensity
+                        </Text>
+                        <Text
+                          style={styles.trainingPacketsAtributesValue}
+                        ></Text>
+                        <Image
+                          style={
+                            item.intensity > 0
+                              ? styles.valueOrb
+                              : styles.noValueOrb
+                          }
+                        />
+                        <Image
+                          style={
+                            item.intensity > 1
+                              ? styles.valueOrb
+                              : styles.noValueOrb
+                          }
+                        />
+                        <Image
+                          style={
+                            item.intensity > 2
+                              ? styles.valueOrb
+                              : styles.noValueOrb
+                          }
+                        />
+                      </View>
+                      <View style={styles.trainingPacketsAtributes}>
+                        <Text style={styles.trainingPacketsAtributesName}>
+                          Duration
+                        </Text>
 
-                      <Image
-                        style={
-                          item.duration > 0
-                            ? styles.valueOrb
-                            : styles.noValueOrb
-                        }
-                      />
-                      <Image
-                        style={
-                          item.duration > 1
-                            ? styles.valueOrb
-                            : styles.noValueOrb
-                        }
-                      />
-                      <Image
-                        style={
-                          item.duration > 2
-                            ? styles.valueOrb
-                            : styles.noValueOrb
-                        }
-                      />
+                        <Image
+                          style={
+                            item.duration > 0
+                              ? styles.valueOrb
+                              : styles.noValueOrb
+                          }
+                        />
+                        <Image
+                          style={
+                            item.duration > 1
+                              ? styles.valueOrb
+                              : styles.noValueOrb
+                          }
+                        />
+                        <Image
+                          style={
+                            item.duration > 2
+                              ? styles.valueOrb
+                              : styles.noValueOrb
+                          }
+                        />
+                      </View>
                     </View>
                   </View>
-                </View>
-              </Link>
-            )}
-          />
-          <Text
-            onPress={() => {
-              console.log(offset);
-            }}
-            style={styles.noMoreCards}
-          >
-            No more workouts available right now. Stay tunned for more.
-          </Text>
-        </ScrollView>
-      </View>
-    </AnimatedView>
+                </Link>
+              )}
+            />
+            <Text
+              onPress={() => {
+                console.log(offset);
+              }}
+              style={styles.noMoreCards}
+            >
+              No more workouts available right now. Stay tunned for more.
+            </Text>
+          </ScrollView>
+        </View>
+      )}
+    </Spring>
   );
 }
 

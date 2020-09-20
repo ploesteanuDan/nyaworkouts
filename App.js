@@ -1,3 +1,4 @@
+// @refresh reset
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Button, StyleSheet, Text, View, YellowBox } from "react-native";

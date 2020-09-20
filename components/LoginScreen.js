@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import * as firebase from "firebase";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Image } from "react-native";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 
 export class LoginScreen extends Component {
@@ -22,7 +22,6 @@ export class LoginScreen extends Component {
         firebase
           .auth()
           .createUserWithEmailAndPassword(email.trim(), password.trim());
-        console.log(email, password);
       }
     } catch (error) {
       console.log(error);
@@ -31,7 +30,6 @@ export class LoginScreen extends Component {
   logInUser = (email, password) => {
     try {
       firebase.auth().signInWithEmailAndPassword(email.trim(), password.trim());
-      console.log(email, password);
     } catch (error) {
       alert(error);
     }
@@ -40,43 +38,45 @@ export class LoginScreen extends Component {
   render() {
     return (
       <View style={styles.loginScreenContainer}>
-        <TextInput
-          autoCapitalize="none"
-          style={styles.credInput}
-          placeholder="Email"
-          onChangeText={(email) => this.setState({ email })}
-          value={this.state.email}
-        />
-        <TextInput
-          secureTextEntry={true}
-          style={styles.credInput}
-          placeholder="Password"
-          onChangeText={(password) => this.setState({ password })}
-          value={this.state.password}
-        />
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity>
-            <Text
-              title="Sign up"
-              onPress={() =>
-                this.signUpUser(this.state.email, this.state.password)
-              }
-              style={styles.signupButton}
-            >
-              Sign up
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text
-              title="Log in"
-              onPress={() =>
-                this.logInUser(this.state.email, this.state.password)
-              }
-              style={styles.loginButton}
-            >
-              Log in
-            </Text>
-          </TouchableOpacity>
+        <View style={styles.credZone}>
+          <TextInput
+            autoCapitalize="none"
+            style={styles.credInput}
+            placeholder="Email"
+            onChangeText={(email) => this.setState({ email })}
+            value={this.state.email}
+          />
+          <TextInput
+            secureTextEntry={true}
+            style={styles.credInput}
+            placeholder="Password"
+            onChangeText={(password) => this.setState({ password })}
+            value={this.state.password}
+          />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity>
+              <Text
+                title="Sign up"
+                onPress={() =>
+                  this.signUpUser(this.state.email, this.state.password)
+                }
+                style={styles.signupButton}
+              >
+                Sign up
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text
+                title="Log in"
+                onPress={() =>
+                  this.logInUser(this.state.email, this.state.password)
+                }
+                style={styles.loginButton}
+              >
+                Log in
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );
@@ -154,6 +154,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     width: "90%",
+  },
+  logo: {
+    resizeMode: "contain",
+    height: 120,
+    marginTop: 150,
+  },
+  credZone: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    top: 100,
   },
 });
 

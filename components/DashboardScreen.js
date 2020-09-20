@@ -6,9 +6,8 @@ import AccountScreen from "./AccountScreen";
 import AchievementsScreen from "./AchievementsScreen";
 import TrainingScreen from "./TrainingScreen";
 import HydrationScreen from "./HydrationScreen";
-import { NativeRouter, Switch, Route } from "react-router-native";
+import { NativeRouter, Switch, Route, BackButton } from "react-router-native";
 import ExercisesScreen from "./ExercisesScreen";
-import { set } from "react-native-reanimated";
 
 export class DashboardScreen extends Component {
   state = {
@@ -49,7 +48,6 @@ export class DashboardScreen extends Component {
                 path="/exercises"
                 render={(props) => (
                   <ExercisesScreen
-                    id="ex"
                     {...props}
                     trainingName={this.state.trainingName}
                     getTrainingName={this.getTrainingName.bind(this)}
@@ -57,6 +55,7 @@ export class DashboardScreen extends Component {
                 )}
               />
             </Switch>
+
             <Navbar
               isToggled={this.state.isToggled}
               style={styles.navbarContainer}

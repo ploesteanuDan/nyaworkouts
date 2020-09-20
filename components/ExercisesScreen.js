@@ -1,197 +1,212 @@
-import React, { useState, useEffect } from "react";
+// @refresh reset
+import React, { useState } from "react";
 import {
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
   FlatList,
   Dimensions,
+  ScrollView,
+  TextInput,
   Image,
+  TouchableOpacity,
 } from "react-native";
-import { Link } from "react-router-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Link } from "react-router-native";
 import { useSpring, animated } from "react-spring";
 import { Spring } from "react-spring/renderprops";
+
 import * as firebase from "firebase";
 
 const exercises = [
   {
-    name: "Squats",
-    color: "dodgerblue",
-    reps: "10",
-    duration: "20",
-    photo: "https://picsum.photos/597",
     key: "0",
-  },
-  {
-    name: "Glutemachine",
-    color: "tomato",
-    reps: "20",
-    duration: "45",
-    photo: "https://picsum.photos/600",
-    key: "1",
-  },
-  {
-    name: "Faint",
-    color: "hotpink",
-    reps: "1",
-    duration: "0.2",
-    photo: "https://picsum.photos/799",
-    key: "2",
-  },
-  {
-    name: "Squats",
-    color: "dodgerblue",
+    photo: "https://picsum.photos/196",
+    name: "Glute Press",
+    includedIn: ["Core Workout", "Runner's Workout"],
     reps: "10",
-    duration: "20",
-    photo: "https://picsum.photos/797",
+  },
+  {
+    key: "1",
+    photo: "https://picsum.photos/296",
+    name: "Squats",
+    includedIn: ["Legs Workout", "Runner's Workout"],
+    reps: "5",
+  },
+  {
+    key: "2",
+    photo: "https://picsum.photos/396",
+    name: "Harakiri",
+    includedIn: ["Core Workout", "Legs Workout"],
+    reps: "3",
+  },
+  {
     key: "3",
-  },
-  {
-    name: "Glutemachine",
-    color: "tomato",
-    reps: "20",
-    duration: "45",
-    photo: "https://picsum.photos/700",
-    key: "4",
-  },
-  {
-    name: "Faint",
-    color: "hotpink",
-    reps: "1",
-    duration: "0.2",
-    photo: "https://picsum.photos/999",
-    key: "5",
+    photo: "https://picsum.photos/126",
+    name: "Push-ups",
+    includedIn: ["Core Workout"],
+    reps: "10",
   },
 ];
 
-function ExercisesScreen(props) {
-  // SPRING ANIMATIONS
-  const cardsFade = useSpring({
+export default function ExercisesScreen(props) {
+  // EX HANDLING
+  let currentUser = firebase.auth().currentUser;
+  const [ex, setEx] = useState(0);
+  if (ex === exercises.length) {
+    console.log("workout completed");
+    firebase.firestore().collection(currentUser.uid).add({
+      trainingDone: props.trainingName,
+    });
+  }
+  //-----------------------------------------------
+
+  //ANIMATIONS
+  const AnimatedView = animated(View);
+  const loadAnim = useSpring({
     left: 0,
     opacity: 1,
     from: { left: -30, opacity: 0 },
   });
-  const titleFade = useSpring({
-    opacity: 1,
-    from: { opacity: 0 },
-  });
-  const AnimatedView = animated(View);
-  // -----------------------------
-
-  // TRAINING COMPLETION
-  const [exDone, setExDone] = useState(0);
-  const [trainingFinished, setTrainingFinished] = useState(false);
-  // -----------------------------
-
-  // FIREBASE
-  let user = firebase.auth().currentUser;
-  // -----------------------------
 
   return (
-    <View style={styles.ExercisesScreenContainer}>
-      <AnimatedView style={titleFade}>
-        <Link
-          component={TouchableOpacity}
-          activeOpacity={0.5}
-          to="/"
-          onPress={() => {
-            props.getTrainingName("none");
-          }}
-        >
-          <Text style={styles.title}>
-            {"< "}
-            {props.trainingName}
-          </Text>
-        </Link>
-      </AnimatedView>
-      <ScrollView>
-        <AnimatedView style={cardsFade}>
-          <FlatList
-            data={exercises}
-            renderItem={({ item }) => (
-              <View style={styles.exerciseCard}>
-                <Image
-                  style={styles.exercisePhoto}
-                  source={{ uri: item.photo }}
-                />
-
-                <Text style={styles.exerciseName}>{item.name}</Text>
-                <View pointerEvents={item.pressed ? "none" : "auto"}>
-                  <Text
-                    style={[
-                      styles.doneButton,
-                      { backgroundColor: item.pressed ? "green" : "#1D1D1D" },
-                    ]}
-                    onPress={() => {
-                      setExDone(exDone + 1);
-                      item.pressed = true;
-                      if (exDone == exercises.length - 1) {
-                        setTrainingFinished(true);
-                      }
-                    }}
-                  >
-                    Done
+    <View>
+      <Spring
+        from={{
+          opacity: 0,
+          top: "7%",
+          left: "2.5%",
+          height: "97%",
+          left: "-5%",
+        }}
+        to={{ opacity: 1, top: "7%", left: "2.5%", height: "95%" }}
+      >
+        {(mainSpring) => (
+          <View style={mainSpring}>
+            <Link
+              component={TouchableOpacity}
+              activeOpacity={0.5}
+              onPress={() => {
+                props.getTrainingName("none");
+              }}
+              to="/"
+            >
+              <Text style={styles.title}>
+                {"< "}
+                {props.trainingName}
+              </Text>
+            </Link>
+            <FlatList
+              data={exercises}
+              renderItem={({ item }) => (
+                <View style={styles.exCard}>
+                  <Image style={styles.exPhoto} source={{ uri: item.photo }} />
+                  <Text style={styles.exName}>{item.name}</Text>
+                  <Text style={styles.exReps}>
+                    {item.reps}
+                    {" REPS"}
                   </Text>
+                  <View pointerEvents={item.done ? "none" : "auto"}>
+                    <Spring
+                      from={{
+                        position: "absolute",
+                        bottom: 10,
+                        right: 10,
+                        fontFamily: "Poppins_600SemiBold_Italic",
+                        fontSize: 20,
+                        color: "#D2D2D2",
+                        backgroundColor: "#191919",
+                        padding: 10,
+                        paddingVertical: 5,
+                        borderRadius: 10,
+                      }}
+                      to={{ backgroundColor: item.done ? "green" : "#191919" }}
+                    >
+                      {(doneButtonProps) => (
+                        <Text
+                          onPress={() => {
+                            setEx(ex + 1);
+                            item.done = true;
+                            console.log("pressed");
+                          }}
+                          style={doneButtonProps}
+                        >
+                          Done
+                        </Text>
+                      )}
+                    </Spring>
+                  </View>
                 </View>
-                <Text style={styles.reps}>
-                  {item.reps}
-                  {" REPS"}
+              )}
+            />
+          </View>
+        )}
+      </Spring>
+
+      <Spring
+        from={{
+          width: "100%",
+          height: "200%",
+          position: "absolute",
+          top: 0,
+        }}
+        to={{
+          width: "100%",
+          height: "150%",
+          position: "absolute",
+          bottom: 0,
+          opacity: ex === exercises.length ? 0.8 : 0,
+          backgroundColor: "black",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {(p) => (
+          <View
+            pointerEvents={ex === exercises.length ? "auto" : "none"}
+            style={p}
+          >
+            <Link
+              component={TouchableOpacity}
+              activeOpacity={0.5}
+              onPress={() => {
+                props.getTrainingName("none");
+              }}
+              to="/"
+            >
+              <View>
+                <Text style={styles.finishScreenText}>Workout finished</Text>
+                <Text style={styles.finishScreenSubtext}>
+                  Touch to go back.
                 </Text>
               </View>
-            )}
-          />
-        </AnimatedView>
-      </ScrollView>
+            </Link>
+          </View>
+        )}
+      </Spring>
       <LinearGradient
         // Background Linear Gradient
         pointerEvents="none"
         colors={["transparent", "black"]}
         start={{ x: 0, y: 0.9 }}
-        end={{ x: 0, y: 1 }}
-        locations={[0, 1]}
+        locations={[0, 0.9]}
         style={{
           position: "absolute",
           left: 0,
           right: 0,
-          bottom: -50,
-          height: 1500,
+          bottom: -100,
+          height: 3500,
         }}
       />
-      <View
-        pointerEvents={trainingFinished ? "auto" : "none"}
-        style={[
-          styles.greenScreen,
-          {
-            backgroundColor: trainingFinished ? "black" : "transparent",
-          },
-        ]}
-      >
-        <Link
-          component={TouchableOpacity}
-          activeOpacity={0.5}
-          to="/"
-          onPress={() => {
-            props.getTrainingName("none");
-            setTrainingFinished(true);
-          }}
-        >
-          <Text onPress={() => {}} style={styles.finishButton}>
-            Finish workout
-          </Text>
-        </Link>
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  ExercisesScreenContainer: {
+  exContainer: {
     top: "7%",
-    left: 0,
+    left: "2.5%",
     height: "95%",
-    width: "100%",
   },
   title: {
     fontSize: 45,
@@ -199,83 +214,68 @@ const styles = StyleSheet.create({
     margin: 20,
     fontFamily: "Poppins_800ExtraBold_Italic",
   },
-  exerciseCard: {
-    left: "2.5%",
+  exCard: {
+    backgroundColor: "#1D1D1D",
     width: Dimensions.get("window").width * 0.95,
     height: Dimensions.get("window").width * 0.53,
-    backgroundColor: "#1D1D1D",
     marginBottom: 10,
     marginTop: 10,
     borderRadius: 12,
+    backgroundColor: "#191919",
     overflow: "hidden",
   },
-  exercisePhoto: {
+  exPhoto: {
     width: "100%",
     height: "100%",
   },
-  exerciseName: {
-    color: "#D2D2D2",
-    fontSize: 20,
-    position: "absolute",
-    bottom: 50,
-    left: 10,
-    fontFamily: "Poppins_600SemiBold_Italic",
-    backgroundColor: "#1D1D1D",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingTop: 3,
-    paddingBottom: 1,
-  },
 
-  finishButton: {
-    alignSelf: "center",
-    position: "absolute",
-    width: 140,
-    height: 50,
-    backgroundColor: "#cf8061",
-    color: "#D2D2D2",
-    borderRadius: 12,
-    textAlign: "center",
-    lineHeight: 65,
-    fontSize: 25,
-    fontFamily: "Poppins_600SemiBold",
-    marginTop: 30,
-    zIndex: 600,
-    marginBottom: 30,
-    top: 500,
-  },
-  reps: {
-    color: "#D2D2D2",
-    fontSize: 20,
+  exReps: {
     position: "absolute",
     bottom: 10,
     left: 10,
     fontFamily: "Poppins_600SemiBold_Italic",
-    backgroundColor: "#1D1D1D",
+    fontSize: 20,
+    color: "#D2D2D2",
+    backgroundColor: "#191919",
+    padding: 10,
+    paddingVertical: 5,
     borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingTop: 3,
-    paddingBottom: 1,
+  },
+  exName: {
+    position: "absolute",
+    bottom: 55,
+    left: 10,
+    fontFamily: "Poppins_600SemiBold_Italic",
+    fontSize: 20,
+    color: "#D2D2D2",
+    backgroundColor: "#191919",
+    padding: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
   },
   doneButton: {
-    color: "#D2D2D2",
-    fontSize: 20,
     position: "absolute",
     bottom: 10,
     right: 10,
     fontFamily: "Poppins_600SemiBold_Italic",
-    backgroundColor: "#1D1D1D",
+    fontSize: 20,
+    color: "#D2D2D2",
+    backgroundColor: "#191919",
+    padding: 10,
+    paddingVertical: 5,
     borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingTop: 3,
-    paddingBottom: 1,
   },
-  greenScreen: {
-    width: "100%",
-    height: "100%",
-    opacity: 1,
-    position: "absolute",
+  finishScreenText: {
+    fontSize: 40,
+    color: "#D2D2D2",
+    fontFamily: "Poppins_800ExtraBold_Italic",
+
+    alignSelf: "center",
+    textAlign: "center",
+  },
+  finishScreenSubtext: {
+    fontSize: 20,
+    fontFamily: "Poppins_600SemiBold",
+    color: "#D2D2D2",
   },
 });
-
-export default ExercisesScreen;
