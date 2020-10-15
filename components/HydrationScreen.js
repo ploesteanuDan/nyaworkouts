@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useSpring, animated, config } from "react-spring";
+import * as firebase from "firebase";
 export default function HydrationScreen() {
   const loadAnim = useSpring({
     left: 0,
@@ -16,6 +17,22 @@ export default function HydrationScreen() {
     from: { left: -30, opacity: 0 },
   });
   const AnimatedView = animated(View);
+  const [setNotifications, notifications] = useState();
+  function handleNotifButton() {
+    function handle(data) {
+      console.log(data);
+    }
+    firebase
+      .firestore()
+      .collection("Users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then(function (doc) {
+        userPref = doc.data().userNotificationsPrefference;
+        handle(userPref);
+      });
+  }
+
   return (
     <AnimatedView style={loadAnim}>
       <View style={styles.AvhievementsScreenContainer}>
@@ -26,7 +43,14 @@ export default function HydrationScreen() {
           Please, enable our notifications to make sure you drink enough water.
         </Text>
         <TouchableOpacity>
-          <Text style={styles.enableNotifButton}>Enable</Text>
+          <Text
+            style={styles.enableNotifButton}
+            onPress={() => {
+              handleNotifButton();
+            }}
+          >
+            Toggle notifications
+          </Text>
         </TouchableOpacity>
       </View>
     </AnimatedView>
@@ -74,5 +98,10 @@ const styles = StyleSheet.create({
     width: "90%",
     alignSelf: "center",
     fontFamily: "Poppins_400Regular",
+  },
+  disableNotifications: {
+    color: "#D2D2D2",
+    fontFamily: "Poppins_400Regular",
+    alignSelf: "center",
   },
 });

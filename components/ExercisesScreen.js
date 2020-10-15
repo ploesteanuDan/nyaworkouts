@@ -15,7 +15,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "react-router-native";
 import { useSpring, animated } from "react-spring";
 import { Spring } from "react-spring/renderprops";
-
+import { Video } from "expo-av";
 import * as firebase from "firebase";
 
 const exercises = [
@@ -24,6 +24,7 @@ const exercises = [
     photo: "https://picsum.photos/196",
     name: "Glute Press",
     includedIn: ["Core Workout", "Runner's Workout"],
+    video: "../assets/squats.mp4",
     reps: "10",
   },
   {
@@ -31,6 +32,7 @@ const exercises = [
     photo: "https://picsum.photos/296",
     name: "Squats",
     includedIn: ["Legs Workout", "Runner's Workout"],
+    video: "",
     reps: "5",
   },
   {
@@ -38,6 +40,7 @@ const exercises = [
     photo: "https://picsum.photos/396",
     name: "Harakiri",
     includedIn: ["Core Workout", "Legs Workout"],
+    video: "",
     reps: "3",
   },
   {
@@ -45,20 +48,35 @@ const exercises = [
     photo: "https://picsum.photos/126",
     name: "Push-ups",
     includedIn: ["Core Workout"],
+    video: "",
     reps: "10",
   },
 ];
 
+
+
 export default function ExercisesScreen(props) {
   // EX HANDLING
   let currentUser = firebase.auth().currentUser;
-  const [ex, setEx] = useState(0);
-  if (ex === exercises.length) {
+  const [exDone, setExDone] = useState(0);
+  const [ex, setEx] = useState(null);
+  if (exDone === exercises.length) {
     console.log("workout completed");
     firebase.firestore().collection(currentUser.uid).add({
       trainingDone: props.trainingName,
     });
   }
+  firebase.firestore().collection("Exercises").get().then(
+    (snapshot) => {
+      const exercises = [];
+      snapshot.forEach( doc => {
+       const containedBy = doc.data().exerciseIsContainedBy
+       if(containedBy.includes(props.trainingName))
+       exercises.push(doc.data())
+      })
+      setEx(exercises)
+    }
+  )
   //-----------------------------------------------
 
   //ANIMATIONS
@@ -97,45 +115,67 @@ export default function ExercisesScreen(props) {
               </Text>
             </Link>
             <FlatList
-              data={exercises}
+              data={ex}
               renderItem={({ item }) => (
                 <View style={styles.exCard}>
-                  <Image style={styles.exPhoto} source={{ uri: item.photo }} />
-                  <Text style={styles.exName}>{item.name}</Text>
-                  <Text style={styles.exReps}>
-                    {item.reps}
-                    {" REPS"}
-                  </Text>
-                  <View pointerEvents={item.done ? "none" : "auto"}>
-                    <Spring
-                      from={{
-                        position: "absolute",
-                        bottom: 10,
-                        right: 10,
-                        fontFamily: "Poppins_600SemiBold_Italic",
-                        fontSize: 20,
-                        color: "#D2D2D2",
-                        backgroundColor: "#191919",
-                        padding: 10,
-                        paddingVertical: 5,
-                        borderRadius: 10,
-                      }}
-                      to={{ backgroundColor: item.done ? "green" : "#191919" }}
-                    >
-                      {(doneButtonProps) => (
-                        <Text
-                          onPress={() => {
-                            setEx(ex + 1);
-                            item.done = true;
-                            console.log("pressed");
+                  <Link
+                    component={TouchableOpacity}
+                    activeOpacity={0.5}
+                    onPress={() => {
+                      item.pressed = !item.pressed;
+                    }}
+                  >
+                    <View>
+                      <Video
+                        source={{uri: item.exerciseVideo}}
+                        rate={1.0}
+                        volume={1.0}
+                        isMuted={false}
+                        resizeMode="cover"
+                        shouldPlay={item.pressed ? true : false}
+                        isLooping={false}
+                        automaticallyWaitsToMinimizeStalling={false}
+                        style={styles.exPhoto}
+                      />
+                      <Text style={styles.exName}>{item.exerciseName}</Text>
+                      <Text style={styles.exReps}>
+                        {item.exerciseReps}
+                        {" REPS"}
+                      </Text>
+                      <View pointerEvents={item.done ? "none" : "auto"}>
+                        <Spring
+                          from={{
+                            position: "absolute",
+                            bottom: 10,
+                            right: 10,
+                            fontFamily: "Poppins_600SemiBold_Italic",
+                            fontSize: 20,
+                            color: "#D2D2D2",
+                            backgroundColor: "#191919",
+                            padding: 10,
+                            paddingVertical: 5,
+                            borderRadius: 10,
                           }}
-                          style={doneButtonProps}
+                          to={{
+                            backgroundColor: item.done ? "green" : "#191919",
+                          }}
                         >
-                          Done
-                        </Text>
-                      )}
-                    </Spring>
-                  </View>
+                          {(doneButtonProps) => (
+                            <Text
+                              onPress={() => {
+                                setExDone(exDone + 1);
+                                item.done = true;
+                                console.log("pressed");
+                              }}
+                              style={doneButtonProps}
+                            >
+                              Done
+                            </Text>
+                          )}
+                        </Spring>
+                      </View>
+                    </View>
+                  </Link>
                 </View>
               )}
             />
@@ -155,7 +195,7 @@ export default function ExercisesScreen(props) {
           height: "150%",
           position: "absolute",
           bottom: 0,
-          opacity: ex === exercises.length ? 0.8 : 0,
+          opacity: exDone === exercises.length ? 0.8 : 0,
           backgroundColor: "black",
           alignItems: "center",
           justifyContent: "center",
@@ -163,7 +203,7 @@ export default function ExercisesScreen(props) {
       >
         {(p) => (
           <View
-            pointerEvents={ex === exercises.length ? "auto" : "none"}
+            pointerEvents={exDone === exercises.length ? "auto" : "none"}
             style={p}
           >
             <Link
@@ -217,7 +257,7 @@ const styles = StyleSheet.create({
   exCard: {
     backgroundColor: "#1D1D1D",
     width: Dimensions.get("window").width * 0.95,
-    height: Dimensions.get("window").width * 0.53,
+    height: Dimensions.get("window").width * 0.95,
     marginBottom: 10,
     marginTop: 10,
     borderRadius: 12,

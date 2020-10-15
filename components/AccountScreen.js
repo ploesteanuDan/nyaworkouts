@@ -18,7 +18,7 @@ export default class AccountScreen extends Component {
 
     this.state = {
       toggle: false,
-      userName: null,
+      userData: null
     };
   }
 
@@ -27,7 +27,36 @@ export default class AccountScreen extends Component {
     user.updateProfile({
       displayName: this.state.userName,
     });
+    firebase
+      .firestore()
+      .collection("Users")
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        userName: this.state.userName,
+      });
   }
+
+async componentDidMount() {
+    await firebase.firestore().collection("Users").where("userEmail","==",firebase.auth().currentUser.email).get().then(
+      (snapshot) => {
+        const user = []
+        snapshot.forEach(
+          doc => {
+            const userData = doc.data()
+            user.push(userData)
+          }
+        )
+        this.setState({userData: user[0]})
+      }
+    )
+
+    this.setState({
+        userName: this.state.userData.userName,
+        userAchievements: this.state.userData.userAchievements, 
+        userNotificationsPrefference: this.state.userData.userNotificationsPrefference ? "On" : "Off"
+  })
+  }
+
   render() {
     return (
       <AnimatedView>
@@ -50,13 +79,15 @@ export default class AccountScreen extends Component {
               >
                 Edit
               </Text>
-              <Text style={styles.infoText}>
-                {firebase.auth().currentUser.displayName}
-              </Text>
+              <Text style={styles.infoText}>{this.state.userName}</Text>
             </View>
             <View>
               <Text style={styles.infoTitle}>Achievements</Text>
-              <Text style={styles.infoText}></Text>
+              <Text style={styles.infoText}>{this.state.userAchievements}</Text>
+            </View>
+            <View>
+              <Text style={styles.infoTitle}>Notifications</Text>
+              <Text style={styles.infoText}>{this.state.userNotificationsPrefference}</Text>
             </View>
           </View>
           <TouchableOpacity>
@@ -138,7 +169,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     backgroundColor: "#191919",
     width: "90%",
-    height: 300,
+    height: 340,
     alignSelf: "center",
     borderRadius: 12,
   },

@@ -15,6 +15,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "react-router-native";
 import { useSpring, animated, config } from "react-spring";
 import { Spring } from "react-spring/renderprops";
+import * as firebase from "firebase";
 const trainingPackets = [
   {
     name: "Core Workout",
@@ -42,7 +43,26 @@ const trainingPackets = [
   },
 ];
 
+
+
+
 function TrainingScreen(props) {
+  
+  //GET TRAININGS FROM FIREBASE
+const [trainingList, setTrainingList] = useState(null)
+firebase.firestore().collection("Trainings").get().then(
+  (snapshot) => {
+    const trainings = [];
+    snapshot.forEach( doc => {
+      const training = doc.data()
+      trainings.push(training)
+    } )
+    setTrainingList(trainings)   
+  }
+)
+
+
+
   const [offset, setOffset] = useState("");
 
   const loadAnim = useSpring({
@@ -81,11 +101,11 @@ function TrainingScreen(props) {
             }}
           >
             <FlatList
-              data={trainingPackets}
+              data={trainingList}
               renderItem={({ item }) => (
                 <Link
                   onPress={() => {
-                    props.getTrainingName(item.name);
+                    props.getTrainingName(item.trainingName);
                     window.removeEventListener;
                   }}
                   component={TouchableOpacity}
@@ -95,12 +115,12 @@ function TrainingScreen(props) {
                   <View style={styles.trainingPackets}>
                     <Image
                       style={styles.trainingPacketsBg}
-                      source={{ uri: item.photo }}
+                      source={{ uri: item.trainingPhoto }}
                     />
                     <LinearGradient
                       // Background Linear Gradient
 
-                      colors={["transparent", item.color]}
+                      colors={["transparent", item.trainingColor]}
                       start={{ x: 0, y: 0.9 }}
                       end={{ x: 0, y: 1 }}
                       locations={[0, 1]}
@@ -113,7 +133,7 @@ function TrainingScreen(props) {
                       }}
                     />
 
-                    <Text style={styles.trainingPacketsName}>{item.name}</Text>
+                    <Text style={styles.trainingPacketsName}>{item.trainingName}</Text>
                     <View style={styles.trainingPacketsAtributesContainer}>
                       <View style={styles.trainingPacketsAtributes}>
                         <Text style={styles.trainingPacketsAtributesName}>
@@ -124,21 +144,21 @@ function TrainingScreen(props) {
                         ></Text>
                         <Image
                           style={
-                            item.intensity > 0
+                            item.trainingIntensity > 0
                               ? styles.valueOrb
                               : styles.noValueOrb
                           }
                         />
                         <Image
                           style={
-                            item.intensity > 1
+                            item.trainingIntensity  > 1
                               ? styles.valueOrb
                               : styles.noValueOrb
                           }
                         />
                         <Image
                           style={
-                            item.intensity > 2
+                            item.trainingIntensity  > 2
                               ? styles.valueOrb
                               : styles.noValueOrb
                           }
@@ -151,21 +171,21 @@ function TrainingScreen(props) {
 
                         <Image
                           style={
-                            item.duration > 0
+                            item.trainingDuration > 0
                               ? styles.valueOrb
                               : styles.noValueOrb
                           }
                         />
                         <Image
                           style={
-                            item.duration > 1
+                            item.trainingDuration > 1
                               ? styles.valueOrb
                               : styles.noValueOrb
                           }
                         />
                         <Image
                           style={
-                            item.duration > 2
+                            item.trainingDuration > 2
                               ? styles.valueOrb
                               : styles.noValueOrb
                           }

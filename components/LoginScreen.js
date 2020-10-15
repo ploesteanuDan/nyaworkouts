@@ -19,9 +19,27 @@ export class LoginScreen extends Component {
         alert("Mooore");
         return;
       } else {
-        firebase
-          .auth()
-          .createUserWithEmailAndPassword(email.trim(), password.trim());
+        // firebase.firestore().collection("Users").add({
+        //   userName: "",
+        //   userEmail: email.trim(),
+        //   userNotificationsPrefference: false,
+        // });
+        let createUserDb = async function () {
+          await firebase
+            .auth()
+            .createUserWithEmailAndPassword(email.trim(), password.trim());
+          firebase
+            .firestore()
+            .collection("Users")
+            .doc(firebase.auth().currentUser.uid)
+            .set({
+              userName: "",
+              userEmail: email.trim(),
+              userNotificationsPrefference: false,
+              userAchievements: 0,
+            });
+        };
+        createUserDb();
       }
     } catch (error) {
       console.log(error);
