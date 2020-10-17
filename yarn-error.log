@@ -1,8 +1,8 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add expo-av4
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add expo-file-systen
 
 PATH: 
-  C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Program Files (x86)\Yarn\bin\;C:\Users\Dan\AppData\Local\Microsoft\WindowsApps;E:\Software\Microsoft VS Code\bin;C:\Users\Dan\AppData\Roaming\npm;C:\Users\Dan\AppData\Local\GitHubDesktop\bin;C:\Users\Dan\AppData\Local\Microsoft\WindowsApps;C:\Users\Dan\AppData\Local\Yarn\bin
+  C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Program Files (x86)\Yarn\bin\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\Dan\AppData\Local\Microsoft\WindowsApps;E:\Software\Microsoft VS Code\bin;C:\Users\Dan\AppData\Roaming\npm;C:\Users\Dan\AppData\Local\GitHubDesktop\bin;C:\Users\Dan\AppData\Local\Microsoft\WindowsApps;C:\Users\Dan\AppData\Local\Yarn\bin;C:\Program Files\JetBrains\PyCharm Community Edition 2020.2.2\bin;
 
 Yarn version: 
   1.22.5
@@ -14,7 +14,7 @@ Platform:
   win32 x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/expo-av4: Not found
+  Error: https://registry.yarnpkg.com/expo-file-systen: Not found
       at Request.params.callback [as _callback] (C:\Program Files (x86)\Yarn\lib\cli.js:66097:18)
       at Request.self.callback (C:\Program Files (x86)\Yarn\lib\cli.js:140749:22)
       at Request.emit (events.js:310:20)
@@ -43,6 +43,7 @@ npm manifest:
       "@react-navigation/native": "^5.7.3",
       "@react-navigation/stack": "^5.9.0",
       "expo": "~38.0.8",
+      "expo-av": "^8.6.0",
       "expo-blur": "~8.1.2",
       "expo-font": "~8.2.1",
       "expo-linear-gradient": "~8.2.1",
@@ -51,6 +52,7 @@ npm manifest:
       "react": "~16.11.0",
       "react-dom": "~16.11.0",
       "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz",
+      "react-native-cache": "^2.0.1",
       "react-native-gesture-handler": "~1.6.0",
       "react-native-reanimated": "~1.9.0",
       "react-native-safe-area-context": "~3.0.7",
@@ -1470,6 +1472,13 @@ Lockfile:
     version "1.1.0"
     resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
     integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
+  
+  "@react-native-community/async-storage@^1.8.1":
+    version "1.12.1"
+    resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.12.1.tgz#25f821b4f6b13abe005ad67e47c6f1cee9f27b24"
+    integrity sha512-70WGaH3PKYASi4BThuEEKMkyAgE9k7VytBqmgPRx3MzJx9/MkspwqJGmn3QLCgHLIFUgF1pit2mWICbRJ3T3lg==
+    dependencies:
+      deep-assign "^3.0.0"
   
   "@react-native-community/cli-debugger-ui@^4.9.0":
     version "4.9.0"
@@ -2977,6 +2986,14 @@ Lockfile:
       md5-file "^3.2.3"
       path-browserify "^1.0.0"
       url-parse "^1.4.4"
+  
+  expo-av@^8.6.0:
+    version "8.6.0"
+    resolved "https://registry.yarnpkg.com/expo-av/-/expo-av-8.6.0.tgz#ab434c05241c1dcdca0edd57acb03aa21a3e46cc"
+    integrity sha512-ZZJtCLCDigeDMu2fyv76Kyifu2quhTn6ViYjM2ku/HvFSvUxlb5kK9imuLog3kR+LRxeIiVS9F29r3PCOqI+rQ==
+    dependencies:
+      lodash "^4.17.15"
+      nullthrows "^1.1.0"
   
   expo-blur@~8.1.2:
     version "8.1.2"
@@ -5365,6 +5382,13 @@ Lockfile:
       fbemitter "^2.1.1"
       invariant "^2.2.4"
       use-subscription "^1.0.0"
+  
+  react-native-cache@^2.0.1:
+    version "2.0.1"
+    resolved "https://registry.yarnpkg.com/react-native-cache/-/react-native-cache-2.0.1.tgz#a90227672ca3b32e1288910fc149df95f4f2f007"
+    integrity sha512-nA/4xz71B/rPy/9s9gJd11XbMh3NYo8g6uO+KAbt7Lbr/9AdLsEgWpmyAMEWj4GVOU37JH5ds7wzowYqpfy2ew==
+    dependencies:
+      "@react-native-community/async-storage" "^1.8.1"
   
   react-native-gesture-handler@~1.6.0:
     version "1.6.1"

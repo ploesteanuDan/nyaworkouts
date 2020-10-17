@@ -1398,6 +1398,13 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
+"@react-native-community/async-storage@^1.8.1":
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.12.1.tgz#25f821b4f6b13abe005ad67e47c6f1cee9f27b24"
+  integrity sha512-70WGaH3PKYASi4BThuEEKMkyAgE9k7VytBqmgPRx3MzJx9/MkspwqJGmn3QLCgHLIFUgF1pit2mWICbRJ3T3lg==
+  dependencies:
+    deep-assign "^3.0.0"
+
 "@react-native-community/cli-debugger-ui@^4.9.0":
   version "4.9.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-4.9.0.tgz#4177764ba69243c97aa26829d59d9501acb2bd71"
@@ -2905,14 +2912,13 @@ expo-asset@~8.1.7:
     path-browserify "^1.0.0"
     url-parse "^1.4.4"
 
-expo-av@~8.2.1:
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/expo-av/-/expo-av-8.2.1.tgz#cab16a5f0766b84a7c2e05e04523cb73a0cd4e9b"
-  integrity sha512-p1W6ta5yFLsyUUB4bH/Bm2gz/KEleYWRYkF7PR3aYXjtTjMX9Ud1gwzEfbMJMKZRSlJydSzy/ieQT8CVatd68A==
+expo-av@^8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/expo-av/-/expo-av-8.6.0.tgz#ab434c05241c1dcdca0edd57acb03aa21a3e46cc"
+  integrity sha512-ZZJtCLCDigeDMu2fyv76Kyifu2quhTn6ViYjM2ku/HvFSvUxlb5kK9imuLog3kR+LRxeIiVS9F29r3PCOqI+rQ==
   dependencies:
     lodash "^4.17.15"
     nullthrows "^1.1.0"
-    prop-types "15.7.2"
 
 expo-blur@~8.1.2:
   version "8.1.2"
@@ -5301,6 +5307,13 @@ react-native-appearance@~0.3.3:
     fbemitter "^2.1.1"
     invariant "^2.2.4"
     use-subscription "^1.0.0"
+
+react-native-cache@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-cache/-/react-native-cache-2.0.1.tgz#a90227672ca3b32e1288910fc149df95f4f2f007"
+  integrity sha512-nA/4xz71B/rPy/9s9gJd11XbMh3NYo8g6uO+KAbt7Lbr/9AdLsEgWpmyAMEWj4GVOU37JH5ds7wzowYqpfy2ew==
+  dependencies:
+    "@react-native-community/async-storage" "^1.8.1"
 
 react-native-gesture-handler@~1.6.0:
   version "1.6.1"

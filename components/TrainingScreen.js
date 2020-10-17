@@ -16,38 +16,23 @@ import { Link } from "react-router-native";
 import { useSpring, animated, config } from "react-spring";
 import { Spring } from "react-spring/renderprops";
 import * as firebase from "firebase";
-const trainingPackets = [
-  {
-    name: "Core Workout",
-    color: "dodgerblue",
-    intensity: "1",
-    duration: "2",
-    photo: "https://picsum.photos/496",
-    key: "0",
-  },
-  {
-    name: "Legs Workout",
-    color: "tomato",
-    intensity: "2",
-    duration: "1",
-    photo: "https://picsum.photos/500",
-    key: "1",
-  },
-  {
-    name: "Runner's Workout",
-    color: "hotpink",
-    intensity: "1",
-    duration: "1",
-    photo: "https://picsum.photos/499",
-    key: "2",
-  },
-];
-
-
-
-
+import * as FileSystem from 'expo-file-system';
 function TrainingScreen(props) {
   
+  async function cacheVideos (uri, docID){
+    await FileSystem.downloadAsync(uri, FileSystem.documentDirectory + docID.toString() + ".mp4").then(console.log(uri))
+  }
+
+  function cacheFirebaseAssets() {
+    firebase.firestore().collection("Exercises").get().then(
+      snapshot => {
+        snapshot.forEach(doc => {
+          cacheVideos(doc.data().exerciseVideo, doc.data().exerciseName)
+        })
+      }
+    )
+  }
+
   //GET TRAININGS FROM FIREBASE
 const [trainingList, setTrainingList] = useState(null)
 firebase.firestore().collection("Trainings").get().then(
@@ -61,21 +46,30 @@ firebase.firestore().collection("Trainings").get().then(
   }
 )
 
+async function handleTrainingSelect(item){
 
+  firebase.firestore().collection("Exercises").get().then(
+    (snapshot) => {
+      const exercises = [];
+      snapshot.forEach( async doc => {
+       const containedBy = doc.data().exerciseIsContainedBy
+       if(containedBy.includes(item.trainingName)){
+         
+         exercises.push(doc.data())
+      
+      }
+      })
+      
+    }
+  )
+await 
+  props.getTrainingName(item.trainingName);
+  window.removeEventListener;
+}
 
   const [offset, setOffset] = useState("");
 
-  const loadAnim = useSpring({
-    left: 0,
-    opacity: 1,
-    from: { left: -30, opacity: 0 },
-  });
-  // const scrollBar = useSpring({
-  //   top: offset ? -100 : 0,
-  //   marginBottom: offset ? -60 : 10,
-  //   from: { top: 0, marginBottom: 10 },
-  // });
-  const AnimatedView = animated(View);
+ 
   return (
     <Spring
       from={{
@@ -103,10 +97,15 @@ firebase.firestore().collection("Trainings").get().then(
             <FlatList
               data={trainingList}
               renderItem={({ item }) => (
+            <View>
+              {/* <View onPress={()=>{console.log("works")}} style={styles.askForDownload}>
+                
+              </View> */}
                 <Link
                   onPress={() => {
-                    props.getTrainingName(item.trainingName);
-                    window.removeEventListener;
+                    cacheFirebaseAssets();
+                    handleTrainingSelect(item);
+               
                   }}
                   component={TouchableOpacity}
                   activeOpacity={0.5}
@@ -193,7 +192,9 @@ firebase.firestore().collection("Trainings").get().then(
                       </View>
                     </View>
                   </View>
+                  
                 </Link>
+                </View>
               )}
             />
             <Text
@@ -297,6 +298,19 @@ const styles = StyleSheet.create({
     width: "90%",
     alignSelf: "center",
   },
+  askForDownload: {
+    position: "absolute",
+    backgroundColor: "#1D1D1D",
+    
+    width: Dimensions.get("window").width * 0.97,
+    height: Dimensions.get("window").width * 0.97,
+    marginBottom: 10,
+    marginTop: 10,
+    borderRadius: 12,
+    overflow: "hidden",
+    backgroundColor: "red",
+    zIndex: 5000
+  }
 });
 
 export default TrainingScreen;
