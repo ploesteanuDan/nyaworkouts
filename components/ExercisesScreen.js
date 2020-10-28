@@ -29,6 +29,9 @@ export default class ExercisesScreen extends Component {
    exercisesDone: 0,
    achievementString: []
   };
+
+
+
   async fetchVideosFromFirebase(){
     await firebase.firestore().collection("Exercises").get().then(
       (snapshot) => {
@@ -50,15 +53,17 @@ export default class ExercisesScreen extends Component {
   }
 
   async fetchAchievementStringFromFirebase(){
-
-    firebase.firestore().collection("Users").doc(firebase.auth().currentUser.uid).get().then(
-    
-      function(doc){
-       this.setState({achievementString: doc.data().achievementString})
-       console.log("hello")
+    firebase.firestore().collection("Users").where("userEmail","==",firebase.auth().currentUser.email)
+    .get().then(
+      snapshot => {
+        const achString = []
+        snapshot.forEach(doc => {
+         const ach = doc.data().achievementString
+         achString.push(ach)
+        })
+        this.setState({achievementString: achString[0]})
       }
-      
-   )
+    )
   }
 
 
@@ -69,12 +74,10 @@ export default class ExercisesScreen extends Component {
 
  async getExStatus(item){
     item.done = true;
-    this.setState({exercisesDone: this.state.exercisesDone + 1})
-
+    await this.setState({exercisesDone: this.state.exercisesDone + 1})
     if(this.state.exercisesDone >= this.state.exercises.length){
-      let newAchString = this.state.achievementString.push(this.props.trainingName)
-   await firebase.firestore().collection("Users").doc(firebase.auth().currentUser.uid).update({
-        achievementString: newAchString
+       firebase.firestore().collection("Users").doc(firebase.auth().currentUser.uid).update({
+        achievementString: this.state.achievementString.concat(this.props.trainingName)
       })
     }
   }
