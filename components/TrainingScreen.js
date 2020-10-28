@@ -1,5 +1,5 @@
 // @refresh reset
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -37,7 +37,9 @@ function TrainingScreen(props) {
   }
 
   //GET TRAININGS FROM FIREBASE
-const [trainingList, setTrainingList] = useState(null)
+  const [trainingList, setTrainingList] = useState(null)
+useEffect(() => {
+ 
 firebase.firestore().collection("Trainings").get().then(
   (snapshot) => {
     const trainings = [];
@@ -48,6 +50,9 @@ firebase.firestore().collection("Trainings").get().then(
     setTrainingList(trainings)   
   }
 )
+}, [])
+
+
 
 async function handleTrainingSelect(item){
 
@@ -70,7 +75,7 @@ await
   window.removeEventListener;
 }
 
-  const [offset, setOffset] = useState("");
+
 
  
   return (
@@ -86,24 +91,16 @@ await
     >
       {(mainProps) => (
         <View style={mainProps}>
-          {/* <AnimatedView style={scrollBar}> */}
+        
           <TextInput style={styles.searchButton} placeholder="Search" />
-          {/* </AnimatedView> */}
+    
           <ScrollView
-            onScrollBeginDrag={() => {
-              setOffset("scrolled");
-            }}
-            onScrollToTop={() => {
-              console.log("works");
-            }}
+            
           >
             <FlatList
               data={trainingList}
               renderItem={({ item }) => (
             <View>
-              {/* <View onPress={()=>{console.log("works")}} style={styles.askForDownload}>
-                
-              </View> */}
                 <Link
                   onPress={() => {
                     cacheFirebaseAssets();
@@ -201,9 +198,6 @@ await
               )}
             />
             <Text
-              onPress={() => {
-                console.log(offset);
-              }}
               style={styles.noMoreCards}
             >
               No more workouts available right now. Stay tunned for more.
