@@ -20,8 +20,11 @@ import * as FileSystem from 'expo-file-system';
 function TrainingScreen(props) {
   
   async function cacheVideos (uri, docID){
+    const videoInfo = await FileSystem.getInfoAsync(uri)
+    if(!videoInfo.exists)
+    {
     await FileSystem.downloadAsync(uri, FileSystem.documentDirectory + docID.toString() + ".mp4").then(console.log(uri))
-  }
+  }}
 
   function cacheFirebaseAssets() {
     firebase.firestore().collection("Exercises").get().then(

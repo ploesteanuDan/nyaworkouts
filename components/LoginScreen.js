@@ -37,6 +37,7 @@ export class LoginScreen extends Component {
               userEmail: email.trim(),
               userNotificationsPrefference: false,
               userAchievements: 0,
+              achievementString: []
             });
         };
         createUserDb();

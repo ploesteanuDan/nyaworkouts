@@ -33,6 +33,8 @@ if (firebase.apps.length === 0) {
 YellowBox.ignoreWarnings([
   "Setting a timer for a long period of time",
   "VirtualizedLists should never be nested inside plain ScrollViews with the same orientation",
+  "Possible Unhandled Promise Rejection",
+  "VirtualizedList"
 ]);
 
 export default function App() {

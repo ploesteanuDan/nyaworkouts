@@ -23,7 +23,10 @@ export class DashboardScreen extends Component {
       trainingName: trainingName,
       isToggled: trainingName === "none" ? true : false,
     });
+  
   }
+
+
 
   render() {
     return (
