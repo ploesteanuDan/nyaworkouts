@@ -76,18 +76,17 @@ export default class ExercisesScreen extends Component {
     item.done = true;
     await this.setState({exercisesDone: this.state.exercisesDone + 1})
     if(this.state.exercisesDone >= this.state.exercises.length){
-       firebase.firestore().collection("Users").doc(firebase.auth().currentUser.uid).update({
+        this.setState({trainingFinished: true})
+        firebase.firestore().collection("Users").doc(firebase.auth().currentUser.uid).update({
         achievementString: this.state.achievementString.concat(this.props.trainingName)
       })
     }
   }
 
-
-
   render() {
     return (
       <View>
-<Spring
+        <Spring
         from={{
           opacity: 0,
           top: "7%",
@@ -115,55 +114,83 @@ export default class ExercisesScreen extends Component {
             <FlatList
               data={this.state.exercises}
               renderItem={({ item }) => (
-                <View style={styles.exCard}>
-                  <Link
-                    component={TouchableHighlight}
-                    activeOpacity={0.85}
-                    onPress={()=>{item.pressed = !item.pressed}}
-                  >
-                    <View>
-                      <Video
-                        source={{uri: item.localVideo}}
-                        rate={1.0}
-                        volume={1.0}
-                        isMuted={true}
-                        resizeMode="cover"
-                        shouldPlay={item.pressed}
-                        isLooping={false}
-                        style={styles.exPhoto}
-                      />
-                      <Text style={styles.exName}>{item.exerciseName}</Text>
-                      <Text style={styles.exReps}>
-                        {item.exerciseReps}
-                        {" REPS"}
-                      </Text>
 
+
+                <Spring
+                 from={{ opacity: 0 }}
+                  to={{ 
+                  opacity: 1,
+                  backgroundColor: "#1D1D1D",
+                  width: Dimensions.get("window").width * 0.95,
+                  height: Dimensions.get("window").width * 0.665,
+                  marginBottom: 10,
+                  marginTop: 10,
+                  borderRadius: 12,
+                  backgroundColor: "#191919",
+                  overflow: "hidden", }}>
+                {cardProps => 
+                
+                <View style={cardProps}>
+                <Link
+                  component={TouchableHighlight}
+                  activeOpacity={0.85}
+                  onPress={()=>{item.pressed = !item.pressed}}
+                >
+                  <View>
+                    <Video
+                      source={{uri: item.localVideo}}
+                      rate={1.0}
+                      volume={1.0}
+                      isMuted={true}
+                      resizeMode="cover"
+                      shouldPlay={item.pressed}
+                      isLooping={false}
+                      style={styles.exPhoto}
+                    />
+                    <Text style={styles.exName}>{item.exerciseName}</Text>
+                    <Text style={styles.exReps}>
+                      {item.exerciseReps}
+                      {" REPS"}
+                    </Text>
+
+                  </View>
+                </Link>
+                <View pointerEvents={item.done ? "none" : "auto"}>  
+
+                <Spring
+                  to={{  
+                  position: "absolute",
+                  bottom: 10,
+                  right: 10,
+                  fontFamily: "Poppins_600SemiBold_Italic",
+                  fontSize: 20,
+                  color: item.done ? "#191919": "#D2D2D2",
+                  backgroundColor: item.done ? "#50d6d3" : "#191919",
+                  padding: 10,
+                  paddingVertical: 5,
+                  borderRadius: 10,
+                  zIndex: 9000, }}>
+                  {doneButtonProps =>                           
+                  <Text          
+                  onPress={()=>{this.getExStatus(item)}} 
+                  style={doneButtonProps}
+                          >
+                            Done
+                          </Text>}
+                </Spring>
+
+
+                    
                     </View>
-                  </Link>
-                  <View pointerEvents={item.done ? "none" : "auto"}>     
-                            <Text
-                              
-                              onPress={()=>{this.getExStatus(item)}} 
-                              style={{
-                              position: "absolute",
-                              bottom: 10,
-                              right: 10,
-                              fontFamily: "Poppins_600SemiBold_Italic",
-                              fontSize: 20,
-                              color: "#D2D2D2",
-                              backgroundColor: item.done ? "green" : "#191919",
-                              padding: 10,
-                              paddingVertical: 5,
-                              borderRadius: 10,
-                              zIndex: 9000,
-                            
-                            }}
-                            >
-                              Done
-                            </Text>
-                      
-                      </View>
-                </View>
+              </View>
+                
+                }
+                </Spring>
+
+
+
+
+
               )}
             />
           </View>
@@ -184,6 +211,49 @@ export default class ExercisesScreen extends Component {
           height: 3500,
         }}
       />
+      <Spring
+        from={{ opacity: 0 }}
+        to={{ 
+          opacity: this.state.trainingFinished ?  1 : 0, 
+          width: "100%",
+          height: this.state.trainingFinished ? "100%" : "0%",
+          backgroundColor: "black",
+          top: 0,
+          position: "absolute"
+        }}>
+          {finishScreenProps => 
+            <View style={finishScreenProps}>
+              <Text style={styles.finishScreenText}>
+                Training finished!
+              </Text>
+              <Spring
+                from={{ opacity: 0 }}
+                to={{ 
+                  opacity: 1,
+                  alignSelf: "center",
+                  textAlign: "center",
+                  top: "50%"
+                   }}>
+                {finishButtonProps => 
+                 <View style={finishButtonProps}>
+                            <Link
+              component={TouchableHighlight}
+              activeOpacity={0.5}
+              onPress={() => {
+                this.props.getTrainingName("none");
+              }}
+              to="/"
+            >
+              <Text style={styles.finishScreenSubtext} >
+                Dashboard
+              </Text>
+            </Link>
+                 </View> 
+                }
+              </Spring>
+            </View>
+          }
+      </Spring>
       </View>
     )
   }
@@ -256,17 +326,19 @@ const styles = StyleSheet.create({
     zIndex: 9000
   },
   finishScreenText: {
+    top: "45%",
     fontSize: 40,
     color: "#D2D2D2",
     fontFamily: "Poppins_800ExtraBold_Italic",
-
     alignSelf: "center",
     textAlign: "center",
   },
   finishScreenSubtext: {
-    fontSize: 20,
+    fontSize: 25,
     fontFamily: "Poppins_600SemiBold",
     color: "#D2D2D2",
+    alignSelf: "center",
+    textAlign: "center",
   },
 
   
