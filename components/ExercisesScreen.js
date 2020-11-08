@@ -138,7 +138,7 @@ export default class ExercisesScreen extends Component {
                 >
                   <View>
                     <Video
-                      source={{uri: item.localVideo}}
+                      source={{uri: item.exerciseVideo}}
                       rate={1.0}
                       volume={1.0}
                       isMuted={true}
